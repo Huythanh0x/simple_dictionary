@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">\
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_search"
+            android:width = "25dp"
+            android:height="25dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/suggestion_text"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Demon"
+            android:textColor="#6c6c6c"
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>
