@@ -3,10 +3,11 @@ package com.example.dictionary;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Toast;
 
-import java.io.IOException;
 
 public class LoadDatabaseAsync extends AsyncTask <Void, Void, Boolean>  {
     private Context context;
@@ -22,8 +23,7 @@ public class LoadDatabaseAsync extends AsyncTask <Void, Void, Boolean>  {
     protected void onPreExecute() {
         // TODO Auto-generated method stub
         super.onPreExecute();
-
-
+        Log.d("start async","database");
         AlertDialog.Builder d = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
         View dialogView = inflater.inflate(R.layout.alert_dialog_database_copying, null);
@@ -61,6 +61,7 @@ public class LoadDatabaseAsync extends AsyncTask <Void, Void, Boolean>  {
     protected void onPostExecute(Boolean result) {
         super.onPostExecute(result);
         alertDialog.dismiss();
+        Log.d("finish async","database");
         MainActivity.openDatabase();
     }
 

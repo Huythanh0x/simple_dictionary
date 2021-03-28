@@ -72,7 +72,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         InputStream myInput = myContext.getAssets().open(DB_NAME);
         String outputName = DB_PATH + DB_NAME;
         OutputStream myOutput = new FileOutputStream(outputName);
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[64];
         int length ;
         while((length = myInput.read(buffer)) > 0){
             myOutput.write(buffer,0,length);
@@ -99,7 +99,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return c;
     }
     public Cursor getSuggestion(String s){
-        Cursor c = myDatabase.rawQuery("SELECT _id,en_word FROM words WHERE en_word LIKE  '"+s+"%' LIMIT 40",null);
+        Cursor c = myDatabase.rawQuery("SELECT _id,en_word FROM words WHERE en_word LIKE  '"+s+"%' LIMIT 4",null);
         return c;
     }
     void insertHistory(String newWord){

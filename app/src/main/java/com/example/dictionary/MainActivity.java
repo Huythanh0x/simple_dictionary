@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -62,19 +63,21 @@ public class MainActivity extends AppCompatActivity {
         databaseHelper = new DatabaseHelper(this);
 
         if (databaseHelper.checkDB()) {
+            Log.d("database on create","open");
             openDatabase();
-        } else {
-            LoadDatabaseAsync loadDatabaseAsync = new LoadDatabaseAsync(MainActivity.this);
-            loadDatabaseAsync.execute();
+//        } else {
+//            LoadDatabaseAsync loadDatabaseAsync = new LoadDatabaseAsync(MainActivity.this);
+//            Log.d("database on create","download");
+//            loadDatabaseAsync.execute();
         }
         final String[] from = new String[]{"en_word"};
         final int[] to = new int[]{R.id.suggestion_text};
 
         cursorAdapter = new SimpleCursorAdapter(MainActivity.this,R.layout.suggestion_row,null,from,to,0){
-            @Override
-            public void changeCursor(Cursor cursor) {
-                super.swapCursor(cursor);
-            }
+//            @Override
+//            public void changeCursor(Cursor cursor) {
+//                super.swapCursor(cursor);
+//            }
         };
         search.setSuggestionsAdapter(cursorAdapter);
         search.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
@@ -102,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onSuggestionClick(int position) {
+                Log.d("on suggestion click","run");
                 CursorAdapter ca = search.getSuggestionsAdapter();
                 Cursor cursor = ca.getCursor();
                 cursor.moveToPosition(position);
@@ -165,9 +169,16 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                Log.d("On query text change " , "was called");
                 search.setIconified(false);
+                Log.d("newText was",newText);
                 Cursor cursorSuggestion = databaseHelper.getSuggestion(newText);
-                cursorAdapter.swapCursor(cursorSuggestion);
+                //bug here
+                if(cursorAdapter !=null ){
+                    cursorAdapter.changeCursor(cursorSuggestion);
+
+                }
+                Log.d("On query text change " , "has done");
                 return false;
             }
         });
@@ -176,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycle_view_history);
         layoutManager = new LinearLayoutManager(MainActivity.this);
         recyclerView.setLayoutManager(layoutManager);
+        Log.d("fetch history","start");
         fetch_history();
 
     }
@@ -188,10 +200,12 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Database","was opened");
             historyCursor = databaseHelper.getHistory();
             if(historyCursor.moveToFirst()){
-                do{
-                    h = new History(historyCursor.getString(historyCursor.getColumnIndex("word")),historyCursor.getString(historyCursor.getColumnIndex("en_definition")));
-                    histories.add(h);
-                }while(historyCursor.moveToNext());
+                h = new History(historyCursor.getString(historyCursor.getColumnIndex("word")),historyCursor.getString(historyCursor.getColumnIndex("en_definition")));
+                histories.add(h);
+            }
+            while(historyCursor.moveToNext()){
+                h = new History(historyCursor.getString(historyCursor.getColumnIndex("word")),historyCursor.getString(historyCursor.getColumnIndex("en_definition")));
+                histories.add(h);
             }
             historyAdapter.notifyDataSetChanged();
         }

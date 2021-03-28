@@ -33,6 +33,8 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.datatype.DatatypeFactory;
 
@@ -49,6 +51,23 @@ public class WordMeaningActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_meaning);
         enWord = getIntent().getExtras().getString("en_word");
+        String action = getIntent().getAction();
+        String type = getIntent().getType();
+
+        if(Intent.ACTION_SEND.equals(action) && type.equals("text/plain")){{
+                    String sharedText = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+                    if(sharedText!=null){
+                        Pattern p = Pattern.compile("[A-Za-z]{1,25}");
+                        Matcher m = p.matcher(sharedText);
+                        if(m.matches()){
+                            enWord = sharedText;
+                        }else{
+                            enWord = "Not available";
+                        }
+
+                    }
+                }
+        }
         Log.d("word check get",enWord);
         myDatabaseHelper = new DatabaseHelper(this);
         try{
@@ -62,10 +81,10 @@ public class WordMeaningActivity extends AppCompatActivity {
             antonyms = cursor.getString(cursor.getColumnIndex("antonyms"));
             example = cursor.getString(cursor.getColumnIndex("example"));
             synonyms = cursor.getString(cursor.getColumnIndex("synonyms"));
-
+            myDatabaseHelper.insertHistory(enWord);
+        }else{
+            enWord = "Not available";
         }
-        myDatabaseHelper.insertHistory(enWord);
-
         ImageButton speakButton = findViewById(R.id.btnSpeak);
         speakButton.setOnClickListener(new View.OnClickListener(){
             @Override
