@@ -15,6 +15,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.cursoradapter.widget.SimpleCursorAdapter;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -169,6 +170,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        emptyHistory = findViewById(R.id.emptyHistory);
+        recyclerView = findViewById(R.id.recycle_view_history);
+        layoutManager = new LinearLayoutManager(MainActivity.this);
+        recyclerView.setLayoutManager(layoutManager);
+        fetch_history();
+
+    }
+    public void fetch_history(){
+        histories = new ArrayList<>();
+        historyAdapter = new RecyclerViewAdapterHistory(histories,this);
+        recyclerView.setAdapter(historyAdapter);
+        History h;
+        if(isOpened){
+            historyCursor = databaseHelper.getHistory();
+            if(historyCursor.moveToFirst()){
+                do{
+                    h = new History(historyCursor.getString(historyCursor.getColumnIndex("word")));
+                    histories.add(h);
+                }while(historyCursor.moveToNext());
+            }
+            historyAdapter.notifyDataSetChanged();
+        }
+        if(histories.size()==0){
+            emptyHistory.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        }
+        else{
+            emptyHistory.setVisibility(View.GONE);
+        }
+
     }
 
     protected static void openDatabase() {
@@ -202,5 +233,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        fetch_history();
+        super.onResume();
     }
 }
