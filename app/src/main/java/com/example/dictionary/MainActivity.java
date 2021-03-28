@@ -22,7 +22,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -183,10 +185,11 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(historyAdapter);
         History h;
         if(isOpened){
+            Log.d("Database","was opened");
             historyCursor = databaseHelper.getHistory();
             if(historyCursor.moveToFirst()){
                 do{
-                    h = new History(historyCursor.getString(historyCursor.getColumnIndex("word")));
+                    h = new History(historyCursor.getString(historyCursor.getColumnIndex("word")),historyCursor.getString(historyCursor.getColumnIndex("en_definition")));
                     histories.add(h);
                 }while(historyCursor.moveToNext());
             }
@@ -198,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             emptyHistory.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
         }
 
     }
